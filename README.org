@@ -1,22 +1,25 @@
 
 My implementation of a rag agent
 
-Name: bragbrag
+* Project Name: bragbrag
 
+** Name Reasoning
 In my friends group, when someone is talking about something awesome they did we often light heartedly respond with "brag brag"
 So when I (Bray) wanted to make a RAG agent to learn about LLM models, brag brag was born
+* Project Objectives
+This project was used as a learning exersise. As I belive that the best way way to learn is to break things, so if you are trying to use this project, just know you have been warned.
 
-This project was used as a learning exersise, and as i belive the best way to learn is to break things, it might be broken my some of my schenanigan s. My objective of this project is to create an RAG agent that utilizes a llama model.
+My objective of this project is to create an RAG agent that utilizes a llama model.
 
-I want to have the following flow
-- Ask a question
-- Retrevie relevant documents
-- Create a grader agent that determines if the documents are releveant to the original question, dropping any documents that are not
-- Generate a response to the original question using the relevent documen ts as reference material
--create a grader agent that determines if the answer is supported by the relevent material, if not, regenerate
--create a grader agent that determines if the original question was answerd, if not regenerate
-- return the response.
-
+I envision this project to have the following flow
+- A user loads a document repository that they want an LLM model to utilize and reference when forming answers.
+- A user asks a question from the command line prompt
+- An agent retreives the relevent documents from the document repository
+- A grader agent reviews the document and responds with a yes/no answer if the grader agent llm thinks the documents retrevied are relevent to the question. If the documents are not relevent it drops them from this response.
+- A LLM agent generates a response to the original question using the relevent documen ts as reference material
+- An grader agent then reviews the response, and responds with a yes/no answer if the grader LLM thinks the response is supported by the source material. If not it will trigger a re-generate.
+- A grader agent will determine if the original question was answered, if not it will trigger a re-generate.
+- If the response is both relevent to the source material, and answers the question a response will be played to the user.
 
 
 [[https://github.com/bkm82/bragbrag/actions][https://github.com/bkm82/bragbrag/actions/workflows/tests.yml/badge.svg]]
