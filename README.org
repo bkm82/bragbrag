@@ -24,4 +24,15 @@ I envision this project to have the following flow
 
 [[https://github.com/bkm82/bragbrag/actions][https://github.com/bkm82/bragbrag/actions/workflows/tests.yml/badge.svg]]
 
+* Setup/dependencies
+** TODO Put this all into a package with these dependencies in the requeirements.txt
+#+begin_src shell
+  pip install -U langchain langchain_community tiktoken langchain-nomic "nomic[local]" langchain-ollama scikit-learn langgraph tavily-python bs4
+#+end_src
 
+ollama is used to get the LLM model https://ollama.com/download
+
+ After it has been installed the model can be pulled using
+ #+begin_src shell
+   ollama pull ollama pull llama3.2:3b-instruct-fp16 
+ #+end_src
