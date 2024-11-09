@@ -75,7 +75,8 @@ class bragbragVCJSONFormatter(logging.Formatter):
 
 
 def print_last_logs(num_lines):
-    log_file = pathlib.Path("logs/bragbrag.log.jsonl")
+    project_dir = pathlib.Path(__file__).resolve().parent
+    log_file = project_dir / "logs" / "bragbrag.log.jsonl"
     with open(log_file, "r") as f:
         lines = f.readlines()
         last_n_lines = lines[-num_lines:]
