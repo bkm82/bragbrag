@@ -5,6 +5,7 @@ Starts the uvicorn backend web aplication on port 8000
 """
 
 import uvicorn
+import logging
 
 
 def main():  # pragma: no cover
@@ -22,5 +23,9 @@ def main():  # pragma: no cover
         * Run an application (Flask, FastAPI, Django, etc.)
     """
 
-    from base import app
+    from bragbrag.base import app, settup_logging
+
+    logger = logging.getLogger("bragbrag")
+    settup_logging()
+    logger.info("Starting app from cli.py")
     uvicorn.run(app, host="0.0.0.0", port=8000)
