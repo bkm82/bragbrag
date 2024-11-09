@@ -4,7 +4,6 @@ import pathlib
 import json
 import logging.config
 import logging.handlers
-import uvicorn
 import importlib.resources as pkg_resources
 import bragbrag.logging_configs
 
