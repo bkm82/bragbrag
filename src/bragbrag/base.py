@@ -24,6 +24,9 @@ def settup_logging():
     json_log_file_path = project_dir / "logs" / "bragbrag.log.jsonl"
     config["handlers"]["file"]["filename"] = str(log_file_path)
     config["handlers"]["jsonfile"]["filename"] = str(json_log_file_path)
+    # Create log directory if it doesn't exist
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
     logging.config.dictConfig(config)
 
 
