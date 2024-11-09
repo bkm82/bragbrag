@@ -51,9 +51,3 @@ app.add_middleware(
 async def read_root():
     logger.debug("The root route was requested")
     return {"Message": "see the /docs route for more information"}
-
-
-if __name__ == "__main__":
-    settup_logging()
-    logger.info("Starting app")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
