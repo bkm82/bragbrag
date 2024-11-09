@@ -7,9 +7,6 @@ import logging.handlers
 import uvicorn
 
 
-logger = logging.getLogger("bragbrag")
-
-
 def settup_logging():
     """Settup logging from a json config file."""
     config_file = pathlib.Path("logging_configs/config.json")
@@ -18,6 +15,7 @@ def settup_logging():
     logging.config.dictConfig(config)
 
 
+logger = logging.getLogger("bragbrag")
 app = FastAPI()
 
 origins = [
