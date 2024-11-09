@@ -1,4 +1,3 @@
-from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import pathlib
 import json
@@ -9,6 +8,7 @@ import uvicorn
 
 logger = logging.getLogger("bragbrag")
 
+
 def settup_logging():
     """Settup logging from a json config file."""
     config_file = pathlib.Path("logging_configs/config.json")
@@ -17,13 +17,12 @@ def settup_logging():
     logging.config.dictConfig(config)
 
 
-
 app = FastAPI()
 
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "https://nwtracker.braymoll.com"
+    "https://nwtracker.braymoll.com",
 ]
 
 app.add_middleware(
@@ -33,6 +32,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+
 
 # Default route (route to /)
 @app.get("/")
