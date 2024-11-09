@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pathlib
 import json
@@ -6,6 +6,12 @@ import logging.config
 import logging.handlers
 import importlib.resources as pkg_resources
 import bragbrag.logging_configs
+
+from pydantic import BaseModel
+from typing import List, Dict
+import time
+
+from mlc_llm import MLCEngine
 
 
 def settup_logging():
@@ -47,9 +53,86 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize the MLCEngine (adjust parameters as needed)
+engine = MLCEngine(
+    model="/home/bkm82/Llama-3.1-8B-Instruct_MLC",  # TODO make this it configurable
+    model_lib="/home/bkm82/Llama-3.1-8B-Instruct_MLC/Llama-3.1-8B-Instruct-opencl.so",  # TODO make this configurable
+    mode="local",
+    device="opencl",
+)
+
+
+# Data model for requests
+class Message(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    model: str
+    messages: List[Message]
+
+
+class ChatResponse(BaseModel):
+    id: str
+    object: str
+    created: int
+    model: str
+    choices: List[Dict[str, str]]
+
+
+# Initialize conversation history
+conversation_history = [
+    {
+        "role": "system",
+        "content": "This is a conversation history for context. Use prior messages as context, and respond only to the latest user prompt.",
+    },
+]
+
 
 # Default route (route to /)
 @app.get("/")
 async def read_root():
     logger.debug("The root route was requested")
     return {"Message": "see the /docs route for more information"}
+
+
+@app.post("/v1/chat/completions", response_model=ChatResponse)
+async def chat_completions(request: ChatRequest):
+    # Add all incoming messages to the conversation history
+    for message in request.messages:
+        conversation_history.append({"role": message.role, "content": message.content})
+
+    # Generate a response
+    assistant_response = ""
+    try:
+        for response in engine.chat.completions.create(
+            messages=conversation_history,
+            model=request.model,
+            stream=True,
+        ):
+            for choice in response.choices:
+                assistant_response += choice.delta.content
+
+        # Append the assistant's response to the conversation history
+        conversation_history.append(
+            {"role": "assistant", "content": assistant_response}
+        )
+
+    except Exception as e:
+        logger.error(f"Error generating response: {e}")
+        raise HTTPException(status_code=500, detail="Error generating response")
+
+    # Construct response payload
+    return ChatResponse(
+        id="unique_id",
+        object="chat.completion",
+        created=int(time.time()),
+        model=request.model,
+        choices=[{"role": "assistant", "content": assistant_response}],
+    )
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    engine.terminate()
