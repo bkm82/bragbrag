@@ -10,7 +10,7 @@
 	    "datefmt": "%Y-%m-%dT%H:%M:%S%z"
 	},
 	"json": {
-	    "()": "jsonlogger.pyflowVCJSONFormatter",
+	    "()": "jsonlogger.bragbragVCJSONFormatter",
 	    "fmt_keys": {
 		"level": "levelname",
 		"message": "message",
@@ -34,7 +34,7 @@
 	    "class": "logging.handlers.RotatingFileHandler",
 	    "level": "DEBUG",
 	    "formatter": "detailed",
-	    "filename" : "logs/pyflowVC.log",
+	    "filename" : "logs/bragbrag.log",
 	    "maxBytes": 1000000,
 	    "backupCount": 3
 	},
@@ -42,7 +42,7 @@
 	    "class": "logging.handlers.RotatingFileHandler",
 	    "level": "DEBUG",
 	    "formatter": "json",
-	    "filename" : "logs/pyflowVC.log.jsonl",
+	    "filename" : "logs/bragbrag.log.jsonl",
 	    "maxBytes": 1000000,
 	    "backupCount": 3
 	}
