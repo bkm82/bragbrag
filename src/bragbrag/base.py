@@ -10,6 +10,7 @@ import bragbrag.logging_configs
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import time
+import os
 
 from mlc_llm import MLCEngine
 
@@ -53,10 +54,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+model_dir = "/home/bkm82/Llama-3.1-8B-Instruct_MLC"
+model_library = "Llama-3.1-8B-Instruct-opencl.so"
 # Initialize the MLCEngine (adjust parameters as needed)
 engine = MLCEngine(
-    model="/home/bkm82/Llama-3.1-8B-Instruct_MLC",  # TODO make this it configurable
-    model_lib="/home/bkm82/Llama-3.1-8B-Instruct_MLC/Llama-3.1-8B-Instruct-opencl.so",  # TODO make this configurable
+    model=model_dir,  # TODO make this it configurable
+    model_lib=os.path.join(model_dir, model_library),
     mode="local",
     device="opencl",
 )
@@ -85,7 +88,9 @@ class ChatResponse(BaseModel):
 conversation_history = [
     {
         "role": "system",
-        "content": "This is a conversation history for context. Use prior messages as context, and respond only to the latest user prompt.",
+        "content": (
+            "Use prior messages as context, and respond only to the latest user prompt."
+        ),
     },
 ]
 
@@ -101,6 +106,7 @@ async def read_root():
 async def chat_completions(request: ChatRequest):
     # Add all incoming messages to the conversation history
     for message in request.messages:
+        logger.debug(f"role: {message.role} content {message.content}")
         conversation_history.append({"role": message.role, "content": message.content})
 
     # Generate a response
@@ -109,12 +115,14 @@ async def chat_completions(request: ChatRequest):
         for response in engine.chat.completions.create(
             messages=conversation_history,
             model=request.model,
-            stream=True,
+            stream=False,
         ):
             for choice in response.choices:
                 assistant_response += choice.delta.content
-
+        # Log the response
+        logger.debug(f"role: assistan, content: {assistant_response}")
         # Append the assistant's response to the conversation history
+
         conversation_history.append(
             {"role": "assistant", "content": assistant_response}
         )
