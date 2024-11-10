@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 import pathlib
 import json
@@ -8,7 +8,7 @@ import importlib.resources as pkg_resources
 import bragbrag.logging_configs
 
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 import time
 
 from mlc_llm import MLCEngine
@@ -131,6 +131,24 @@ async def chat_completions(request: ChatRequest):
         model=request.model,
         choices=[{"role": "assistant", "content": assistant_response}],
     )
+
+
+@app.get("/v1/models")
+async def get_models(authorization: Optional[str] = Header(None)):
+
+    # Define the model response
+    response = {
+        "object": "list",
+        "data": [
+            {
+                "id": "Llama-3.1-8B-Instruct_MLC",
+                "object": "model",
+                "created": int(time.time()),
+                "owned_by": "Meta",
+            }
+        ],
+    }
+    return response
 
 
 @app.on_event("shutdown")
